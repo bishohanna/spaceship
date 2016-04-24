@@ -6,8 +6,9 @@ import com.spaceship.app.inputProcessor.romanCalculator.RomanCalculator;
 import com.spaceship.app.inputProcessor.romanCalculator.RomanCalculatorFactory;
 import com.spaceship.app.inputProcessor.romanCalculator.RomanResultModel;
 import com.spaceship.tools.baseChain.ChainNode;
+import com.spaceship.tools.logger.Logger;
+import com.spaceship.tools.logger.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,9 +20,11 @@ public class QuestionsEvaluatorNode implements ChainNode<ProcessorResultModel, I
     private final static String BAD_RESPONSE = "I have no idea what you are talking about ";
 
     private final RomanCalculator romanCalculator;
+    private final Logger logger;
 
     public QuestionsEvaluatorNode() {
         romanCalculator = RomanCalculatorFactory.get();
+        logger = LoggerFactory.get();
     }
 
     @Override
@@ -77,6 +80,7 @@ public class QuestionsEvaluatorNode implements ChainNode<ProcessorResultModel, I
         RomanResultModel romanPartResult = romanCalculator.calculateValue(romanBuilder.toString());
 
         if (!romanPartResult.isValid()) {
+            logger.logLine(String.format("Validation error with [%s], error [%s]", effectivePart, romanPartResult.getErrorMessage()));
             return BAD_RESPONSE; //bad roman part !
         } else {
             Float romanValue = romanPartResult.getNumericResult();
@@ -121,6 +125,7 @@ public class QuestionsEvaluatorNode implements ChainNode<ProcessorResultModel, I
         RomanResultModel romanPartResult = romanCalculator.calculateValue(romanBuilder.toString());
 
         if (!romanPartResult.isValid()) {
+            logger.logLine(String.format("Validation error with [%s], error [%s]", effectivePart, romanPartResult.getErrorMessage()));
             return BAD_RESPONSE; //bad roman part !
         } else {
             Float romanValue = romanPartResult.getNumericResult();
